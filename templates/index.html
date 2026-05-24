@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧙 Witaj w Wiosce Smerfów! - Quiz Osobowości</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Smerfny quiz osobowości na piknik rodzinny! Odpowiedz na 5 pytań i sprawdź, czy drzemie w Tobie Papa Smerf, Smerfetka, Pracuś czy Osiłek. 100% anonimowo.">
+    <meta name="keywords" content="smerfy, quiz, piknik rodzinny, którym smerfem jestes, pracus, osilek, papa smerf, smerfetka">
+    
+    <!-- Google Fonts: Outfit (headings) & Inter (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- QRious library for dynamic QR Codes -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- Floating Background Bubbles -->
+    <div class="bg-bubble b1"></div>
+    <div class="bg-bubble b2"></div>
+    <div class="bg-bubble b3"></div>
+    <div class="bg-bubble b4"></div>
+
+    <main class="quiz-container">
+        
+        <!-- HEADER / BRANDING -->
+        <header class="quiz-header">
+            <div class="brand">
+                <i class="fa-solid fa-mushroom brand-icon"></i>
+                <span class="brand-text">Piknik "Wioska Smerfów"</span>
+            </div>
+            <div class="progress-bar-container" id="progress-container" style="display: none;">
+                <div class="progress-bar" id="progress-fill"></div>
+            </div>
+            <div class="privacy-badge">
+                <i class="fa-solid fa-face-smile"></i> Rodzinna Zabawa
+            </div>
+        </header>
+
+        <!-- SLIDE 0: LANDING PAGE -->
+        <section class="slide active" id="slide-welcome">
+            <div class="welcome-content">
+                <div class="welcome-text-side">
+                    <h1 class="main-title">🧙 Witaj w Wiosce Smerfów!</h1>
+                    <p class="welcome-description">
+                        Przed Tobą smerfna przygoda. Odpowiedz na 5 pytań i odkryj, którym mieszkańcem Wioski Smerfów jesteś! 🌲🍄
+                    </p>
+                    
+                    <div class="welcome-features">
+                        <div class="feature-item">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                            <span>Zabawa dla dzieci i dorosłych</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa-solid fa-mobile-retro"></i>
+                            <span>Zeskanuj QR i graj na telefonie!</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>Brak reklam i 100% anonimowości</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary btn-large" id="btn-start" onclick="nextSlide()">
+                        Zaczynam! <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                    <span class="press-enter-hint">lub naciśnij <strong>Enter ↵</strong></span>
+                </div>
+
+                <div class="welcome-visual-side">
+                    <div class="card glassmorphism welcome-card">
+                        <img src="{{ url_for('static', filename='images/smurfs/welcome.png') }}" alt="Wioska Smerfów" class="welcome-image">
+                        
+                        <div class="qr-share-box">
+                            <div class="qr-text">
+                                <strong>Uruchom na telefonie! 📲</strong>
+                                <p>Zeskanuj ten kod QR swoim smartfonem, aby wygodnie rozwiązać quiz podczas pikniku!</p>
+                            </div>
+                            <div class="qr-code-wrapper">
+                                <canvas id="qr-welcome"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUESTION SLIDES CONTAINER -->
+        <div id="questions-wrapper">
+            <!-- Dynamically populated by quiz.js -->
+        </div>
+
+        <!-- RESULT SLIDE -->
+        <section class="slide" id="slide-result">
+            <div class="result-container">
+                <div class="result-header">
+                    <span class="result-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> Smerfny wynik gotowy!</span>
+                    <h2 class="result-title">Oto Twój Smerf!</h2>
+                </div>
+
+                <div class="result-content-grid">
+                    <div class="result-image-side">
+                        <div class="card glassmorphism smurf-result-card">
+                            <img src="" alt="Twój Smerf" id="result-smurf-img" class="result-smurf-image">
+                        </div>
+                    </div>
+
+                    <div class="result-text-side card glassmorphism">
+                        <h3 class="smurf-name" id="result-smurf-name">Papa Smerf</h3>
+                        <p class="smurf-description" id="result-smurf-desc">
+                            Opis...
+                        </p>
+
+                        <!-- Custom Premium Advices (remains as extra delightful content!) -->
+                        <div class="advice-box advice-child" id="child-box">
+                            <div class="advice-title">
+                                <i class="fa-solid fa-child"></i> <strong>Smerfna rada dla dziecka:</strong>
+                            </div>
+                            <p id="result-advice-child">...</p>
+                        </div>
+
+                        <div class="advice-box advice-parent" id="parent-box">
+                            <div class="advice-title">
+                                <i class="fa-solid fa-hands-holding-child"></i> <strong>Smerfna mądrość dla rodzica:</strong>
+                            </div>
+                            <p id="result-advice-parent">...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SPECIFIED ORIGINAL ENDING BANNER -->
+                <div class="card glassmorphism final-credo-banner">
+                    <i class="fa-solid fa-quote-left credo-quote-icon"></i>
+                    <p class="credo-text" id="final-credo-text">
+                        „Każdy Smerf jest wyjątkowy – tak samo jak Ty! Największą supermocą Wioski Smerfów jest współpraca, życzliwość i dobra zabawa.”
+                    </p>
+                </div>
+
+                <div class="result-footer-actions">
+                    <button class="btn btn-secondary" onclick="restartQuiz()">
+                        <i class="fa-solid fa-rotate-left"></i> Zagraj jeszcze raz
+                    </button>
+                    
+                    <div class="card glassmorphism share-results-card">
+                        <div class="share-info">
+                            <h4>Zagrajcie razem na pikniku! 🌲</h4>
+                            <p>Pokaż ten kod QR znajomym, aby też dowiedzieli się, którym Smerfem są!</p>
+                        </div>
+                        <div class="share-qr">
+                            <canvas id="qr-result"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NAVIGATION CONTROLS (Floating at the bottom, Typeform-style) -->
+        <footer class="quiz-footer" id="quiz-navigation" style="display: none;">
+            <div class="nav-btn-group">
+                <button class="btn-nav" id="btn-prev" onclick="prevSlide()" title="Poprzednie pytanie">
+                    <i class="fa-solid fa-chevron-up"></i>
+                </button>
+                <button class="btn-nav" id="btn-next" onclick="submitCurrentAnswer()" title="Następne pytanie">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+            </div>
+            <div class="keyboard-instructions">
+                Naciśnij <strong>A - D</strong> lub kliknij, aby wybrać odpowiedź
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- Script file -->
+    <script src="{{ url_for('static', filename='js/quiz.js') }}"></script>
+</body>
+</html>
